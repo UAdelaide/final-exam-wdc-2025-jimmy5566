@@ -80,6 +80,16 @@ app.get('/api/walkrequests/open', async (req, res) => {
   }
 });
 
+async function startServer() {
+  pool = mysql.createPool(dbConfig);
+
+  await insertTestData();
+
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+}
+
 startServer().catch((err) => {
   console.error('Failed to start server:', err);
 });
