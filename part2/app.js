@@ -55,6 +55,13 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+app.post('/api/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.clearCookie('connect.sid');
+    res.json({ success: true });
+  });
+});
+
 async function insertTestUsers() {
   const db = await mysql.createConnection({
     host: process.env.DB_HOST || '127.0.0.1',
