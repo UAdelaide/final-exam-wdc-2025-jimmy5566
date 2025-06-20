@@ -53,6 +53,19 @@ async function insertTestData() {
 
 app.use(express.static(__dirname));
 
+app.get('/api/dogs', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT d.dog_id, d.name, d.size, u.username AS owner
+      FROM Dogs d
+      JOIN Users u ON d.owner_id = u.user_id
+    `);
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch dogs' });
+  }
+});
+
 startServer().catch((err) => {
   console.error('Failed to start server:', err);
 });
