@@ -69,7 +69,6 @@ async function insertTestUsers() {
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'DogWalkService'
   });
-  await db.query(`DELETE FROM Users WHERE username = 'bobwalker'`);
   await db.query(`
     INSERT IGNORE INTO Users (username, email, password_hash, role, created_at) VALUES
     ('ownerJane', 'jane@example.com', 'hashedpassword123', 'owner', '2025-06-06 01:32:58'),
