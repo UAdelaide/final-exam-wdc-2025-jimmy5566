@@ -69,12 +69,6 @@ async function insertTestUsers() {
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'DogWalkService'
   });
-  await db.query(`
-    INSERT IGNORE INTO Users (username, email, password_hash, role, created_at) VALUES
-    ('ownerJane', 'jane@example.com', 'hashedpassword123', 'owner', '2025-06-06 01:32:58'),
-    ('walkerMike', 'mike@example.com', 'hashedpassword456', 'walker', '2025-06-06 01:32:58'),
-    ('ownerBob', 'bob@example.com', 'hashedpassword789', 'owner', '2025-06-06 01:34:32')
-  `);
   await db.end();
 }
 
