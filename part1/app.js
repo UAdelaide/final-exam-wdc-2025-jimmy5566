@@ -80,6 +80,21 @@ app.get('/api/walkrequests/open', async (req, res) => {
   }
 });
 
+app.get('/api/walkers/summary', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT u.username, COUNT(wa.application_id) AS application_count
+      FROM Users u
+      LEFT JOIN WalkApplications wa ON u.user_id = wa.walker_id
+      WHERE u.role = 'walker'
+      GROUP BY u.username
+    `);
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch walkers summary' });
+  }
+});
+
 async function startServer() {
   pool = mysql.createPool(dbConfig);
 
