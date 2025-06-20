@@ -46,6 +46,24 @@
       border-radius: 20px;
       box-shadow: 0 0 20px #0008;
     }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
   </style>
 </head>
 <body>
@@ -68,6 +86,32 @@
     </div>
     <marquee behavior="alternate" direction="right" scrollamount="20" style="font-size:2em;color:red;">Welcome to the Dog of the Day! 🐾🐾🐾</marquee>
   </div>
+
+  <div id="dogTableApp" class="container py-4">
+    <h2>All Dogs(please wait one sec, need loading times)</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Size</th>
+          <th>Owner</th>
+          <th>Photo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="dog in dogs" :key="dog.dog_id">
+          <td>{{ dog.name }}</td>
+          <td>{{ dog.size }}</td>
+          <td>{{ dog.owner }}</td>
+          <td>
+            <img v-if="dog.photo" :src="dog.photo" alt="Dog photo" style="width:100px;height:100px;object-fit:cover;">
+            <span v-else>Loading...</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
   <script>
     const { createApp } = Vue;
     createApp({
@@ -88,6 +132,30 @@
         }
       }
     }).mount('#app');
+
+    const { createApp: createAppTable, ref, onMounted } = Vue;
+
+    createAppTable({
+      setup() {
+        const dogs = ref([]);
+
+        async function fetchDogs() {
+          const res = await fetch('/api/dogs');
+          const data = await res.json();
+
+          await Promise.all(data.map(async (dog) => {
+            const imgRes = await fetch('https://dog.ceo/api/breeds/image/random');
+            const imgData = await imgRes.json();
+            dog.photo = imgData.message;
+          }));
+          dogs.value = data;
+        }
+
+        onMounted(fetchDogs);
+
+        return { dogs };
+      }
+    }).mount('#dogTableApp');
   </script>
 </body>
 </html>
