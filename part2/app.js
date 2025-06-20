@@ -62,6 +62,24 @@ app.post('/api/logout', (req, res) => {
   });
 });
 
+app.get('/api/mydogs', async (req, res) => {
+  if (!req.session.user || req.session.user.role !== 'owner') {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const db = await mysql.createConnection({
+    host: process.env.DB_HOST || '127.0.0.1',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'DogWalkService'
+  });
+  const [rows] = await db.query(
+    'SELECT dog_id, name FROM Dogs WHERE owner_id = ?',
+    [req.session.user.id]
+  );
+  await db.end();
+  res.json(rows);
+});
+
 async function insertTestUsers() {
   const db = await mysql.createConnection({
     host: process.env.DB_HOST || '127.0.0.1',
