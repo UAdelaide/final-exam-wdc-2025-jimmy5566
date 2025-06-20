@@ -80,6 +80,13 @@ app.get('/api/mydogs', async (req, res) => {
   res.json(rows);
 });
 
+app.get('/api/users/me', (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Not logged in' });
+  }
+  res.json(req.session.user);
+});
+
 async function insertTestUsers() {
   const db = await mysql.createConnection({
     host: process.env.DB_HOST || '127.0.0.1',
