@@ -66,6 +66,20 @@ app.get('/api/dogs', async (req, res) => {
   }
 });
 
+app.get('/api/walkrequests/open', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT wr.request_id, d.name AS dog, wr.requested_time, wr.duration_minutes, wr.location
+      FROM WalkRequests wr
+      JOIN Dogs d ON wr.dog_id = d.dog_id
+      WHERE wr.status = 'open'
+    `);
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch open walk requests' });
+  }
+});
+
 startServer().catch((err) => {
   console.error('Failed to start server:', err);
 });
