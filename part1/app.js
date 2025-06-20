@@ -13,6 +13,15 @@ const dbConfig = {
 
 let pool;
 
+async function insertTestData() {
+  const conn = await pool.getConnection();
+  try {
+
+  } finally {
+    conn.release();
+  }
+}
+
 app.use(express.static(__dirname));
 
 startServer().catch((err) => {
